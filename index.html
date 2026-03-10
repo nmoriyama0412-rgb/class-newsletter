@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学級通信メーカー</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Inter & Noto Sans JP -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左サイドパネル（入力・操作エリア） -->
+        <aside class="control-panel no-print">
+            <header>
+                <h1>学級通信メーカー</h1>
+                <p>メモと写真で半自動作成</p>
+            </header>
+
+            <section class="basic-info-section">
+                <h2>基本情報</h2>
+                <div class="input-group row">
+                    <div class="field">
+                        <label for="newsletter-title">タイトル</label>
+                        <input type="text" id="newsletter-title" value="学級通信" placeholder="例: 飛躍, スマイル等">
+                    </div>
+                    <div class="field">
+                        <label for="newsletter-issue">号数</label>
+                        <input type="text" id="newsletter-issue" value="第1号" placeholder="例: 第1号">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="newsletter-date">発行日</label>
+                    <input type="date" id="newsletter-date">
+                </div>
+            </section>
+
+            <section class="memo-section">
+                <h2>AI用メモ入力</h2>
+                <p class="hint">箇条書きで記入してください</p>
+                <div class="input-group">
+                    <label for="memo-events">今日の出来事</label>
+                    <textarea id="memo-events" rows="2" placeholder="例: 学活で係活動の振り返りをした"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="memo-good">生徒のよかった姿</label>
+                    <textarea id="memo-good" rows="2" placeholder="例: 友達の意見を最後まで聞く姿が見られた"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="memo-message">伝えたいこと</label>
+                    <textarea id="memo-message" rows="2" placeholder="例: 少しずつ自分たちで動ける雰囲気が出てきた"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="memo-notes">連絡事項</label>
+                    <textarea id="memo-notes" rows="2" placeholder="例: 明日は体操服登校"></textarea>
+                </div>
+                <button id="generate-prompt-btn" class="primary-btn">AI用指示文をコピー</button>
+            </section>
+
+            <section class="ai-result-section">
+                <h2>AI生成文章の貼り付け</h2>
+                <div class="input-group">
+                    <textarea id="ai-result-text" rows="6" placeholder="ChatGPT/Geminiで生成された文章をここに貼り付けてください"></textarea>
+                </div>
+            </section>
+
+            <section class="photo-section">
+                <h2>写真の追加 (最大5枚)</h2>
+                <input type="file" id="photo-upload" accept="image/*" multiple max="5">
+                <div id="photo-file-names" class="file-names"></div>
+            </section>
+
+            <div class="actions">
+                <button id="preview-pdf-btn" class="success-btn">安全チェック＆PDF保存</button>
+            </div>
+        </aside>
+
+        <!-- 右メインパネル（A4プレビュー領域） -->
+        <main class="preview-panel">
+            <div class="a4-page" id="a4-preview">
+                <!-- ヘッダー -->
+                <div class="a4-header">
+                    <div class="a4-title-wrapper">
+                        <div class="a4-title" id="preview-title">学級通信</div>
+                        <span id="season-icon" class="season-icon"></span>
+                    </div>
+                    <div class="a4-meta">
+                        <span id="preview-date">2026年3月10日</span>
+                        <span id="preview-issue">第1号</span>
+                    </div>
+                </div>
+                <!-- 境界線 -->
+                <hr class="a4-divider">
+                
+                <!-- 本文 -->
+                <div class="a4-body" id="preview-body">
+                    ここに文章が表示されます。左側の「AI生成文章の貼り付け」にテキストを入力してください。
+                </div>
+
+                <!-- 写真コラージュ領域 -->
+                <div class="a4-photos layout-0" id="preview-photos">
+                    <!-- JSで動的に追加 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 安全チェックモーダル -->
+    <div id="checklist-modal" class="modal hidden no-print">
+        <div class="modal-content">
+            <h2>印刷（PDF保存）前の安全チェック</h2>
+            <p>以下の項目をすべて確認し、チェックを入れてください。</p>
+            <form id="checklist-form">
+                <label class="check-item"><input type="checkbox" required> 生徒名が入っていないか確認した。</label>
+                <label class="check-item"><input type="checkbox" required> 個人が特定されるような写真になっていないか確認した。</label>
+                <label class="check-item"><input type="checkbox" required> 写真に名札や名簿が写っていないか確認した。</label>
+                <label class="check-item"><input type="checkbox" required> 黒板や掲示物に個人情報がないか確認した。</label>
+                <label class="check-item"><input type="checkbox" required> トラブルが特定されるような表現になっていないか確認した。</label>
+            </form>
+            <div class="modal-actions">
+                <button id="cancel-modal-btn" class="secondary-btn">キャンセル</button>
+                <button id="confirm-print-btn" class="primary-btn" disabled>PDFとして保存する</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
