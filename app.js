@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const titleInput = document.getElementById('newsletter-title');
     const issueInput = document.getElementById('newsletter-issue');
     const dateInput = document.getElementById('newsletter-date');
+    const publisherInput = document.getElementById('newsletter-publisher');
     const eventsInput = document.getElementById('memo-events');
     const goodInput = document.getElementById('memo-good');
     const messageInput = document.getElementById('memo-message');
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewTitle = document.getElementById('preview-title');
     const previewDate = document.getElementById('preview-date');
     const previewIssue = document.getElementById('preview-issue');
+    const previewPublisher = document.getElementById('preview-publisher');
     const previewBody = document.getElementById('preview-body');
     const previewPhotos = document.getElementById('preview-photos');
     const seasonIcon = document.getElementById('season-icon');
@@ -66,22 +68,55 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const autoFitContent = () => {
+        const filler = document.getElementById('filler-illustration');
+        if (filler) filler.style.display = 'none';
+
         // Reset to default sizes
-        previewBody.style.fontSize = '12pt';
-        previewBody.style.lineHeight = '1.8';
+        previewBody.style.fontSize = '11pt';
+        previewBody.style.lineHeight = '2';
         
         // Wait for DOM to render to accurately calculate scrollHeight
         requestAnimationFrame(() => {
             const a4Page = document.getElementById('a4-preview');
-            let currentSize = 12;
-            let currentLineHeight = 1.8;
+            let currentSize = 11;
+            let currentLineHeight = 2.0;
 
-            while (a4Page.scrollHeight > a4Page.clientHeight && currentSize > 6) {
+            while (a4Page.scrollHeight > a4Page.clientHeight && currentSize > 7) {
                 currentSize -= 0.5;
-                if(currentSize <= 10) currentLineHeight = 1.6;
+                if(currentSize <= 10) currentLineHeight = 1.8;
                 previewBody.style.fontSize = `${currentSize}pt`;
                 previewBody.style.lineHeight = `${currentLineHeight}`;
             }
+
+            // Check for empty space and add filler illustration
+            requestAnimationFrame(() => {
+                const bodyRect = previewBody.getBoundingClientRect();
+                const photosRect = previewPhotos.getBoundingClientRect();
+                const pageRect = a4Page.getBoundingClientRect();
+                
+                let emptySpace = 0;
+                // 写真がある場合は写真枠の上から本文下までの距離。写真がない場合はページ下部マージンとの距離
+                if (photoUpload.files.length > 0) {
+                    emptySpace = photosRect.top - bodyRect.bottom;
+                } else {
+                    const pagePaddingBottom = 20 * 3.78; // approx 20mm
+                    emptySpace = pageRect.bottom - bodyRect.bottom - pagePaddingBottom;
+                }
+
+                if (emptySpace > 120 && filler) {
+                    filler.style.display = 'flex';
+                    // 空白スペースの大きさに応じてフォントサイズを調整
+                    filler.style.fontSize = emptySpace > 300 ? '8rem' : '4rem';
+                    
+                    const d = dateInput.value ? new Date(dateInput.value) : new Date();
+                    const month = d.getMonth() + 1;
+                    const fillerIcons = {
+                        1: '🎍🎌', 2: '⛄❄️', 3: '🌸🎓', 4: '🌷🎒', 5: '🎏🌿', 6: '☔🐌',
+                        7: '🎋🍉', 8: '🌻☀️', 9: '🎑🍂', 10: '🎃👻', 11: '🍁🐿️', 12: '🎄🎅'
+                    };
+                    filler.textContent = fillerIcons[month] || '🏫✨';
+                }
+            });
         });
     };
 
@@ -90,6 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
         previewTitle.textContent = titleInput.value || '学級通信';
         previewIssue.textContent = issueInput.value || '';
         previewDate.textContent = formatDateJP(dateInput.value);
+        if (publisherInput.value) {
+            previewPublisher.textContent = '発行：' + publisherInput.value;
+        } else {
+            previewPublisher.textContent = '';
+        }
         
         if (dateInput.value) {
             seasonIcon.textContent = getDailyIcon(dateInput.value);
@@ -100,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     titleInput.addEventListener('input', syncHeader);
     issueInput.addEventListener('input', syncHeader);
     dateInput.addEventListener('input', syncHeader);
+    publisherInput.addEventListener('input', syncHeader);
 
     // Generate AI Prompt
     generatePromptBtn.addEventListener('click', () => {

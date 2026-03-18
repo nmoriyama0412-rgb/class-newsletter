@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>学級通信メーカー</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts: Inter & Noto Sans JP -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter & Noto Sans JP (UI) & Noto Serif JP (News) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
@@ -29,9 +29,15 @@
                         <input type="text" id="newsletter-issue" value="第1号" placeholder="例: 第1号">
                     </div>
                 </div>
-                <div class="input-group">
-                    <label for="newsletter-date">発行日</label>
-                    <input type="date" id="newsletter-date">
+                <div class="input-group row">
+                    <div class="field">
+                        <label for="newsletter-date">発行日</label>
+                        <input type="date" id="newsletter-date">
+                    </div>
+                    <div class="field">
+                        <label for="newsletter-publisher">発行者</label>
+                        <input type="text" id="newsletter-publisher" value="〇〇中学校 3年1組" placeholder="例: 〇〇中学校 3年1組">
+                    </div>
                 </div>
             </section>
 
@@ -78,23 +84,27 @@
         <!-- 右メインパネル（A4プレビュー領域） -->
         <main class="preview-panel">
             <div class="a4-page" id="a4-preview">
-                <!-- ヘッダー -->
-                <div class="a4-header">
-                    <div class="a4-title-wrapper">
-                        <div class="a4-title" id="preview-title">学級通信</div>
+                <!-- ヘッダー（新聞風） -->
+                <div class="a4-header newspaper-header">
+                    <div class="newspaper-meta-top">
+                        <span id="preview-date">2026年3月10日</span>
                         <span id="season-icon" class="season-icon"></span>
                     </div>
-                    <div class="a4-meta">
-                        <span id="preview-date">2026年3月10日</span>
+                    <div class="a4-title-wrapper">
+                        <div class="a4-title" id="preview-title">学級通信</div>
+                    </div>
+                    <div class="newspaper-meta-bottom">
                         <span id="preview-issue">第1号</span>
+                        <span id="preview-publisher" class="newspaper-publisher">発行：〇〇中学校 3年1組</span>
                     </div>
                 </div>
-                <!-- 境界線 -->
-                <hr class="a4-divider">
                 
-                <!-- 本文 -->
-                <div class="a4-body" id="preview-body">
-                    ここに文章が表示されます。左側の「AI生成文章の貼り付け」にテキストを入力してください。
+                <!-- 本文（新聞風2段組み） -->
+                <div class="newspaper-content">
+                    <div class="a4-body" id="preview-body">
+                        ここに文章が表示されます。左側の「AI生成文章の貼り付け」にテキストを入力してください。
+                    </div>
+                    <div id="filler-illustration" class="filler-illustration"></div>
                 </div>
 
                 <!-- 写真コラージュ領域 -->
