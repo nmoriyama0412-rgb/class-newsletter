@@ -173,151 +173,274 @@ input[type="file"] {
 .a4-page {
     width: var(--a4-width);
     height: var(--a4-height);
-    background-color: #fdfbf7; /* Slightly off-white paper color */
+    background-color: #fdfbf7;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     padding: var(--a4-padding);
     margin: 0 auto;
     text-align: left;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr); /* ヘッダー, 大見出し, 残りのコンテンツエリア */
+    gap: 20px;
     box-sizing: border-box;
     overflow: hidden;
     color: #1a1a1a;
     font-family: 'Noto Serif JP', serif;
+    writing-mode: horizontal-tb; /* もう一度横書きベースにする */
 }
 
-/* --- Newspaper Layout --- */
+/* --- Newspaper Layout Structure --- */
 .newspaper-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    border-top: 2px solid #1a1a1a;
+    border-bottom: 2px solid #1a1a1a;
+    width: 100%;
+    align-items: stretch;
+}
+.header-info {
+    border-right: 1px solid #1a1a1a;
+    padding: 10px 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    border-top: 4px double #1a1a1a;
-    border-bottom: 4px double #1a1a1a;
-    padding: 10px 0;
-    margin-bottom: 20px;
-    position: relative;
-}
-.newspaper-meta-top, .newspaper-meta-bottom {
-    width: 100%;
-    display: flex;
     justify-content: space-between;
-    font-size: 0.9rem;
-    font-family: 'Noto Sans JP', sans-serif;
-    color: #333;
+    font-size: 1.1rem;
+    min-width: max-content;
 }
-.a4-title-wrapper {
+.header-info div {
+    display: flex;
+    flex-direction: column;
+}
+.header-info .date {
+    margin-bottom: 5px;
+}
+.header-right {
+    padding: 10px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px 0;
+    height: 100%;
+}
+.a4-title-wrapper {
+    width: 100%;
+    height: 85px; /* heightを90pxから少し縮小して枠に完全にフィットさせる */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid #1a1a1a;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 .a4-title {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 900;
-    letter-spacing: 10px;
+    letter-spacing: 12px;
     text-align: center;
+    margin: 0;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    direction: ltr !important;
+    white-space: nowrap !important;
 }
 .season-icon {
-    font-size: 2.5rem;
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.8;
+    display: none; /* In this layout, we remove the icon as per reference */
 }
 
-.newspaper-content {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+/* 縦書き設定ユーティリティ */
+.vertical-text {
+    writing-mode: vertical-rl;
+    /* text-orientation: upright; は英数字まで強制的に正立させるため削除。
+       必要に応じて text-orientation: mixed; で自然な縦書き向き（英字は横倒し）にする。
+       日本語フォントは自動で正立します。 */
+    text-orientation: mixed;
 }
-.a4-body {
-    font-size: 11pt;
+
+/* 大見出し */
+.main-headline-wrapper {
+    width: 100%;
+    background-color: #1a1a1a;
+    color: white;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.main-headline {
+    font-size: 2.8rem;
+    font-weight: 900;
+    letter-spacing: 5px;
+    margin: 0;
+    line-height: 1.4;
+    word-break: auto-phrase;
+    overflow-wrap: break-word;
+    writing-mode: horizontal-tb; /* 確実に横書き */
+}
+
+.newspaper-banner {
+    background-color: #1a1a1a;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    /* margin-left: 20px; 縦書き世界での下マージン */ /* 削除 */
+    writing-mode: horizontal-tb; /* バナーも横書きの世界 */
+}
+.newspaper-banner h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 5px;
+    white-space: pre-wrap;
+    word-break: auto-phrase;
+    overflow-wrap: break-word; /* allow breaking on long words if phrase fails */
+}
+
+.newspaper-content-area {
+    /* flexを削除し、gridアイテムとして振る舞わせる */
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: grid; /* 新聞コンテンツエリア自体をグリッドにする */
+    grid-template-rows: 300px minmax(0, 1fr); /* 上段（写真と縦見出し）, 下段（本文と連絡） */
+    gap: 20px;
+}
+
+.newspaper-content-area.no-media {
+    display: flex;
+    flex-direction: row-reverse;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 15px;
+}
+
+/* 上段（写真と縦見出し） */
+.top-section {
+    display: flex; /* 横並び */
+    justify-content: flex-end; /* 小見出しを右、写真を左の配置にするため右寄せベースに */
+    flex-direction: row-reverse; /* 右から左へ要素を並べる(右に小見出し、左に写真) */
+    height: 300px;
+    gap: 20px;
+}
+
+.newspaper-content-area.no-media .top-section {
+    height: auto;
+    min-height: unset;
+}
+
+.newspaper-content-area.no-media .bottom-section {
+    border-top: none;
+    border-bottom: none;
+    padding-bottom: 0;
+    height: auto;
+    flex: 1 1 0;
+}
+
+/* 縦長の小見出し */
+.sub-headline-wrapper {
+    flex: 0 0 auto;
+    padding: 0 10px;
+}
+.sub-headline {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: 2px;
+    margin: 0; /* 意図せぬ余白で下部が切れないようにする */
+    writing-mode: vertical-rl; /* ここは縦書き */
+    text-orientation: upright;
+}
+
+/* メディア領域（写真・AIイラスト） */
+.media-area {
+    width: 60%; /* Limit width to make illustration smaller and text more prominent */
+    display: grid;
+    gap: 10px;
+    background-color: #fdfbf7; /* Changed to match paper background instead of grey */
+}
+
+/* Layouts for photos */
+.media-area.layout-0 {
+    display: none; /* Layout 0 means no photos, and we expand the sub-headline */
+}
+/* When layout 0, make sub headline take more space or format differently if needed */
+.media-area.layout-0 ~ .sub-headline-wrapper {
+    width: 100%;
+    justify-content: center;
+}
+
+.media-area.layout-1 {
+    grid-template-columns: 1fr;
+}
+.media-area.layout-2 {
+    grid-template-columns: 1fr 1fr;
+}
+.media-area.layout-3 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 60% 40%;
+}
+.media-area.layout-3 img:first-child {
+    grid-column: 1 / -1;
+}
+
+.media-area img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Changed from cover so it doesn't get cropped aggressively */
+    border: 1px solid #ccc;
+    background-color: white;
+    padding: 4px; /* classic photo frame look */
+}
+
+/* 下段（本文と連絡） */
+.bottom-section {
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 2px solid #1a1a1a;
+    padding: 15px 0;
+    display: flex;
+    flex-direction: row-reverse; /* 右から左へ（本文 -> 連絡事項） */
+    justify-content: flex-start; /* 右寄せからスタート */
+    overflow: hidden;
+    gap: 20px;
+    width: 100%;
+    height: 100%; /* gridコンテナ内でストレッチ */
+}
+
+/* 本文（縦書き多段組み） */
+.article-body {
+    height: 100%;
+    flex-grow: 1; /* 親(bottom-section)の中で最大の幅を取る */
+    font-size: 11.5pt;
     line-height: 2;
     text-align: justify;
     column-count: 2;
     column-gap: 30px;
     column-rule: 1px solid #ccc;
-    white-space: pre-wrap;
-    margin-bottom: 20px;
-}
-.filler-illustration {
-    display: none;
-    flex-grow: 1;
-    align-items: center;
-    justify-content: center;
-    font-size: 5rem;
-    color: #cbd5e1;
-    letter-spacing: 20px;
-    opacity: 0.3;
+    margin: 0;
+    padding: 0;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    display: block; /* ensure block level rendering for multicolumn across flex container */
+    overflow: hidden; /* prevents overflow squishing */
 }
 
-.a4-photos {
-    display: grid;
-    gap: 15px;
-    width: 100%;
-    margin-top: auto;
-    border-top: 1px solid #ddd;
-    padding-top: 15px;
+/* 連絡事項 */
+.notes-section {
+    margin-top: 30px; /* 本文との間隔（縦書きにおける下方向のご間隔） */
+    border: 2px solid #1a1a1a;
+    padding: 10px 15px;
+    display: inline-block;
+    vertical-align: top;
+    break-inside: avoid; /* 段組をまたがないようにする */
 }
-.a4-photos img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border: 1px solid #ccc; /* Photo border like a newspaper */
-    padding: 3px;
-    background-color: white;
+.notes-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
 }
-
-/* 1 photo */
-.layout-1 {
-    grid-template-columns: 1fr;
-    max-height: 120mm;
-}
-.layout-1 img {
-    height: 250px;
-}
-
-/* 2 photos */
-.layout-2 {
-    grid-template-columns: 1fr 1fr;
-}
-.layout-2 img {
-    height: 220px;
-}
-
-/* 3 photos */
-.layout-3 {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 200px 150px;
-}
-.layout-3 img:first-child {
-    grid-column: 1 / -1;
-    height: 200px;
-}
-.layout-3 img:not(:first-child) {
-    height: 150px;
-}
-
-/* 4 photos */
-.layout-4 {
-    grid-template-columns: 1fr 1fr;
-    grid-auto-rows: 150px;
-}
-
-/* 5 photos */
-.layout-5 {
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 150px 150px;
-}
-.layout-5 img:nth-child(1),
-.layout-5 img:nth-child(2) {
-    grid-column: span 1.5;
-}
-.layout-5 img:nth-child(3),
-.layout-5 img:nth-child(4),
-.layout-5 img:nth-child(5) {
-    grid-column: span 1;
+.notes-body {
+    font-size: 10pt;
+    line-height: 1.8;
 }
 
 /* --- Modal --- */

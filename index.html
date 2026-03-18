@@ -85,31 +85,59 @@
         <main class="preview-panel">
             <div class="a4-page" id="a4-preview">
                 <!-- ヘッダー（新聞風） -->
-                <div class="a4-header newspaper-header">
-                    <div class="newspaper-meta-top">
-                        <span id="preview-date">2026年3月10日</span>
-                        <span id="season-icon" class="season-icon"></span>
+                <div class="newspaper-header" id="newspaper-header">
+                    <div class="header-info">
+                        <div class="date">
+                            <span id="preview-date">2026年3月12日</span>
+                            <span id="season-icon" class="season-icon"></span>
+                        </div>
+                        <div class="issue-info">
+                            <span id="preview-issue">第1号</span>
+                        </div>
+                        <div class="publisher-info">
+                            <span id="preview-publisher" class="newspaper-publisher">発行者：〇〇中学校 3年1組</span>
+                        </div>
                     </div>
-                    <div class="a4-title-wrapper">
-                        <div class="a4-title" id="preview-title">学級通信</div>
-                    </div>
-                    <div class="newspaper-meta-bottom">
-                        <span id="preview-issue">第1号</span>
-                        <span id="preview-publisher" class="newspaper-publisher">発行：〇〇中学校 3年1組</span>
+                    <div class="header-right">
+                        <div class="a4-title-wrapper">
+                            <div class="a4-title" id="preview-title">学級通信</div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- 本文（新聞風2段組み） -->
-                <div class="newspaper-content">
-                    <div class="a4-body" id="preview-body">
-                        ここに文章が表示されます。左側の「AI生成文章の貼り付け」にテキストを入力してください。
-                    </div>
-                    <div id="filler-illustration" class="filler-illustration"></div>
+                <!-- 大見出し -->
+                <div class="main-headline-wrapper">
+                    <h1 id="preview-main-headline" class="main-headline">見出し</h1>
                 </div>
 
-                <!-- 写真コラージュ領域 -->
-                <div class="a4-photos layout-0" id="preview-photos">
-                    <!-- JSで動的に追加 -->
+                <!-- コンテンツエリア（写真・縦見出し・本文・連絡網） -->
+                <div class="newspaper-content-area">
+                    <!-- 上段：写真・縦見出し -->
+                    <div class="top-section">
+                        <!-- 写真・イラスト領域 -->
+                        <div class="media-area layout-1" id="preview-photos">
+                            <!-- デフォルトはグレー背景など -->
+                        </div>
+                        <!-- 縦長の小見出し -->
+                        <div class="sub-headline-wrapper vertical-text">
+                            <h2 id="preview-sub-headline" class="sub-headline">見出し<br>見出し</h2>
+                        </div>
+                    </div>
+
+                    <!-- 下段：本文（縦書き多段組み）と連絡事項 -->
+                    <div class="bottom-section">
+                        <div class="article-body vertical-text" id="preview-body-container">
+                            <span id="preview-body-text">ここに文章が表示されます。左側の「AI生成文章の貼り付け」にテキストを入力してください。</span>
+                            
+                            <!-- 連絡事項 -->
+                            <div class="notes-section" id="notes-container">
+                                <div class="notes-title">【連絡等】</div>
+                                <div id="preview-notes" class="notes-body">
+                                    明日は体操服登校
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
