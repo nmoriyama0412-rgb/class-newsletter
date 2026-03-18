@@ -257,8 +257,10 @@ input[type="file"] {
 /* 大見出し */
 .main-headline-wrapper {
     width: 100%;
-    background-color: #1a1a1a;
-    color: white;
+    background-color: #1a1a1a !important; /* Force black background */
+    color: white !important; /* Force white text */
+    -webkit-print-color-adjust: exact; /* Keep colors when printing */
+    print-color-adjust: exact;
     padding: 15px 20px;
     margin-bottom: 20px;
     text-align: center;
@@ -579,5 +581,13 @@ input[type="file"] {
     @page {
         size: A4 portrait;
         margin: 0mm;
+    }
+    
+    /* Ensure headline prints with exact styling */
+    .main-headline-wrapper {
+        background-color: #1a1a1a !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 }
